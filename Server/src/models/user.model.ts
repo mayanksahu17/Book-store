@@ -1,14 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 interface IUser extends Document {
     username: string;
     email: string;
     fullName: string;
-    avatar: string;
-    coverImage?: string;
-    watchHistory: Schema.Types.ObjectId[];
+    books : Schema.Types.ObjectId[];
     password: string;
     refreshToken?: string;
 }
@@ -35,24 +33,13 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
         index: true,
         trim: true
     },
-    avatar: {
-        type: String,
-        required: true
-    },
-    coverImage: {
-        type: String
-    },
-    watchHistory: [{
-        type: Schema.Types.ObjectId,
-        ref: "Video"
-    }],
     password: {
         type: String,
         required: [true, "password is required"]
     },
     refreshToken: {
         type: String
-    }
+    },
 }, { timestamps: true });
 
 userSchema.pre<IUser>("save", async function (next) {
@@ -73,10 +60,10 @@ userSchema.methods.generateAccessToken = function () {
             username: this.username,
             fullName: this.fullName
         },
-        process.env.ACCESS_TOKEN : 
+        process.env.ACCESS_TOKEN as string, // Asserting it as string
         {
-            expiresIn : process.env.ACCES_EXPIRY_TOKEN
-        }
+            expiresIn: process.env.ACCESS_EXPIRY_TOKEN as string // Asserting it as string
+        } as SignOptions // Asserting it as SignOptions
     );
     return AccessToken;
 };
@@ -86,10 +73,10 @@ userSchema.methods.generateRefreshToken = function () {
         {
             _id: this._id
         },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET as string, // Asserting it as string
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-        }
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY as string // Asserting it as string
+        } as SignOptions // Asserting it as SignOptions
     );
 };
 
