@@ -6,11 +6,14 @@ interface IUser extends Document {
     username: string;
     email: string;
     fullName: string;
-    books : Schema.Types.ObjectId[];
+    books : [Schema.Types.ObjectId[]];
+    sellBooks : [Schema.Types.ObjectId[]];
     password: string;
     refreshToken?: string;
+    role : string;
 }
 
+// @ts-ignore
 const userSchema: Schema<IUser> = new Schema<IUser>({
     username: {
         type: String,
@@ -40,6 +43,20 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
     refreshToken: {
         type: String
     },
+    role : {
+        type : String
+    },
+    books : [{
+        type: Schema.Types.ObjectId,
+        ref: "Book"
+    } ],
+    sellBooks : [
+        {
+            type : Schema.Types.ObjectId,
+            ref : "Bool"
+        }
+    ]
+
 }, { timestamps: true });
 
 userSchema.pre<IUser>("save", async function (next) {
