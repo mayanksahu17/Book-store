@@ -11,6 +11,12 @@ interface IUser extends Document {
     password: string;
     refreshToken?: string;
     role : string;
+    address : string;
+
+
+    isPasswordCorrect(password: string): Promise<boolean>;
+    generateAccessToken(): string;
+    generateRefreshToken(): string;
 }
 
 // @ts-ignore
@@ -30,12 +36,7 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
         lowercase: true,
         trim: true
     },
-    fullName: {
-        type: String,
-        required: true,
-        index: true,
-        trim: true
-    },
+
     password: {
         type: String,
         required: [true, "password is required"]
@@ -53,9 +54,12 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
     sellBooks : [
         {
             type : Schema.Types.ObjectId,
-            ref : "Bool"
+            ref : "Book"
         }
-    ]
+    ],
+    address: {
+        type: String
+    },
 
 }, { timestamps: true });
 
