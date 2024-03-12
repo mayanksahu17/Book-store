@@ -6,7 +6,13 @@ import { Request, Response } from 'express';
 import {uploadOnCloudinary} from "../utills/cloudinary";
 import jwt from "jsonwebtoken"
 
+interface decodeToken {
+    _id : string;
+    username : string;
+    email : string;
+    fullName: string;
 
+}
 const generateAccessTokenandRefreshToken = async (userId: string) => {
     try {
         const user = await User.findById(userId);
@@ -106,7 +112,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         );
 });
 
-
 const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
     try {
         const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
@@ -115,8 +120,7 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
             throw new ApiError(401, "Unauthorized request");
         }
 
-        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET) as { _id: string };
-
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET as string) as decodeToken ;
         const user = await User.findById(decodedToken?._id);
 
         if (!user) {

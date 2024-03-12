@@ -7,6 +7,7 @@ interface IBook extends Document {
     price : number,
     seller : string,
     image : string,
+
 }
 
 const BookSchema : Schema<IBook> = new Schema<IBook>({
@@ -29,7 +30,8 @@ const BookSchema : Schema<IBook> = new Schema<IBook>({
     image : {
             type : String,
             required : true
-    }
+    },
+
 
 })
 
